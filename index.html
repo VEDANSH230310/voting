@@ -3,25 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Random File</title>
+    <title>Create File in GitHub Repository</title>
 </head>
 <body>
-    <h1>Create a Random File on Server</h1>
+    <h1>Create a File in GitHub Repository</h1>
     <button id="createFileButton">Create File</button>
     <p id="response"></p>
 
     <script>
-        document.getElementById("createFileButton").addEventListener("click", () => {
-            fetch("http://localhost:3000/create-file")
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById("response").innerText = data;
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    document.getElementById("response").innerText = "Error creating file.";
+        async function createFileInGitHub() {
+            const repoOwner = "VEDANSH230310";
+            const repoName = "voting";
+            const branch = "main"; // Change if necessary
+            const filePath = `random_file_${Math.random().toString(36).substr(2, 9)}.txt`;
+            const content = btoa("This is a randomly generated file."); // Base64 encode content
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer YOUR_ACCESS_TOKEN`, // Replace with serverless call in production
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        message: "Create new random file",
+                        content: content,
+                        branch: branch,
+                    }),
                 });
-        });
+
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById("response").innerText = `File created: ${data.content.path}`;
+                } else {
+                    document.getElementById("response").innerText = `Error: ${data.message}`;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("response").innerText = "Error creating file.";
+            }
+        }
+
+        document.getElementById("createFileButton").addEventListener("click", createFileInGitHub);
     </script>
 </body>
 </html>
