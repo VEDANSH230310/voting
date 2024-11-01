@@ -10,7 +10,7 @@ exports.handler = async function(event, context) {
     const response = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
         method: "PUT",
         headers: {
-            "Authorization": `Bearer ${process.env.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}`, // Store in Netlify environment variables
+            "Authorization": `Bearer ${process.env.token}`, // Store in Netlify environment variables
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
